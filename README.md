@@ -1,5 +1,8 @@
 # aleo-nft
 
+We're creating the first NFT collection on Aleo on Testnet3 as soon as it becomes available.
+Follow us on Twitter to learn about when we mint: https://twitter.com/demoxlabs
+
 We wanted to create an NFT that inspires community participation.
 Instead of a global mint, only accounts with an NFT can mint a new NFT and send it to someone new.
 
