@@ -3,7 +3,7 @@ program nft.aleo;
 
 /**
 * Each NFT is stored as a record onchain.
-* The total number of mintable NFTs is determined by remaining^rank: 3^6 => 729 max potential total supply
+* The total number of mintable NFTs is determined by remaining^rank: 3^6 => 729 max potential total supply (assuming one root)
 * The actual image is stored on Arweave and retrievable through the transaction ID which is a SHA-256 signature
 **/
 record nft:
@@ -44,6 +44,7 @@ finalize initialize:
 
     increment nft_totals[r0] by 1u8;
 
+// Only the initial owner of the collection can mint the root level NFTs
 function premint:
     input r0 as address.private;
     input r1 as u128.private;
@@ -69,11 +70,15 @@ finalize premint:
 
     decrement nft_totals[r0] by 1u8;
 
+// Anyone with an NFT can mint an NFT with rank - 1 and selecting the new owner
+// Minting an NFT lowers the amount_remaining that can be minted by 1
 function mint:
     input r0 as nft.record;
     input r1 as address.private;
     input r2 as u128.private;
     input r3 as u128.private;
+
+    assert.neq r0.owner r1; // Make it slightly tougher for the same person to mint a bunch of NFTs to themself
     
     sub r0.remaining 1u8 into r4;
     cast r0.owner r0.gates r0.rank r4 r0.data1 r0.data2 into r5 as nft.record;
@@ -94,6 +99,8 @@ finalize mint:
 
     decrement nft_totals[r0] by 1u8;
 
+// Privately transfer the NFT to a new owner
+// Does not change the NFT in any way.
 function transfer:
     input r0 as nft.record;
     input r1 as address.private;
