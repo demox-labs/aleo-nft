@@ -26,11 +26,11 @@ mapping nft_totals:
 
 mapping nft_owner_data1:
     key address as address.public;
-    value amount as u8.public;
+    value amount as u128.public;
 
 mapping nft_owner_data2:
     key address as address.public;
-    value amount as u8.public;
+    value amount as u128.public;
 
 // Load the data into the mapping
 // Enables someone to mint an NFT with provided Arweave transaction id
