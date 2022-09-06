@@ -11,7 +11,7 @@ Each NFT is stored as a record with an Arweave transaction id that points to the
 Each NFT tracks its rank (how many parent NFTs it has) and how many NFTs can be further minted.
 Right now, rank is set for 6 and mintable NFTs per NFT is 3. This limits the total supply to 3^6 => 729.
 
-## Build Guide
+## Build Guide v1
 
 To compile this Aleo program, run:
 ```bash
