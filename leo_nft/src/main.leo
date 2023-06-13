@@ -23,13 +23,40 @@ program leo_nft.aleo {
         private edition: scalar, // which edition of the nft this particular one is -- will be 0 for unique NFTs
     }
 
+    // a way to prove ownership of an nft privately
+    record NFT_ownership {
+        private owner: address,
+        private nft_owner: address,
+        private data: TokenId,
+        private edition: scalar, // which edition of the nft this particular one is -- will be 0 for unique NFTs
+    }
+
+    transition prove_ownership(private nft: NFT, private prove_to: address) -> (NFT, NFT_ownership) {
+        return (
+            NFT {
+                owner: nft.owner,
+                data: nft.data,
+                edition: nft.edition
+            },
+            NFT_ownership {
+                owner: prove_to,
+                nft_owner: nft.owner,
+                data: nft.data,
+                edition: nft.edition
+            }
+        );
+    }
+
     // 'https://opensea.io/assets/ethereum/' in ascii bits is
-    // 01101000 01110100 01110100 01110000 01110011 00111010 00101111 00101111 01101111 01110000 01100101 01101110 01110011 01100101 01100001 00101110 01101001 01101111 00101111 01100001 01110011 01110011 01100101 01110100 01110011 00101111 01100101 01110100 01101000 01100101 01110010 01100101 01110101 01101101 00101111
+    // 01101000 01110100 01110100 01110000 01110011 00111010 00101111 00101111
+    // 01101111 01110000 01100101 01101110 01110011 01100101 01100001 00101110
+    // 01101001 01101111 00101111 01100001 01110011 01110011 01100101 01110100
+    // 01110011 00101111 01100101 01110100 01101000 01100101 01110010 01100101
+    // 01110101 01101101 00101111
     // converted to u128s (with padded 0s for the third u128):
     // 138844379665950632631524487595232157998u128
     // 140146245502826949739664710348378042981u128
     // 156086589137666824969765175673495748608u128
-
     transition getBaseURIBits() -> BaseURIBits {
         return BaseURIBits {
             data1: 138844379665950632631524487595232157998u128,
@@ -68,7 +95,6 @@ program leo_nft.aleo {
         nft_totals.set(tokenEditionHash, amount);
     }
 
-    // TODO: add edition
     transition mint(private tokenId: TokenId, private edition: scalar, private owner: address) -> NFT {
         let tokenHash: field = BHP256::hash(tokenId);
         let tokenEditionHash: field = BHP256::commit(tokenHash, edition);
